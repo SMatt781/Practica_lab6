@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-
-<!--  Fragment: navbar
-      Uso: <nav th:replace="~{fragments/navbar :: navbar}"></nav>  -->
+<!--
+    Namespace sec: permite usar sec:authorize en la vista
+    (Clase 6.1 - Spring Security Dialect)
+-->
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
 
-        <a class="navbar-brand fw-bold" th:href="@{/}">
-            🎬 CineGTICS
-        </a>
+        <a class="navbar-brand fw-bold" th:href="@{/}">🎬 CineGTICS</a>
 
         <button class="navbar-toggler" type="button"
                 data-bs-toggle="collapse" data-bs-target="#navMenu">
@@ -17,13 +17,54 @@
         </button>
 
         <div class="collapse navbar-collapse" id="navMenu">
-            <ul class="navbar-nav ms-auto">
+            <ul class="navbar-nav me-auto">
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/}">Películas</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/nueva}">Nueva película</a>
+                <!-- Solo el admin ve el enlace de nueva película -->
+                <li class="nav-item" sec:authorize="hasAuthority('admin')">
+                    <a class="nav-link" th:href="@{/nueva}">+ Nueva película</a>
                 </li>
+            </ul>
+
+            <ul class="navbar-nav ms-auto">
+
+                <!-- Si el usuario NO está logueado -->
+                <li class="nav-item" sec:authorize="isAnonymous()">
+                    <a class="nav-link" th:href="@{/loginForm}">Iniciar sesión</a>
+                </li>
+
+                <!-- Si el usuario SÍ está logueado -->
+                <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
+                    <a class="nav-link dropdown-toggle" href="#"
+                       data-bs-toggle="dropdown">
+                        <!--
+                            Clase 6.2 - Spring Session:
+                            session.usuarioLogueado se guardó en el successHandler
+                        -->
+                        <span th:text="${session.usuarioLogueado.nombre}">Usuario</span>
+                        <small class="text-secondary ms-1">
+                            (<span sec:authentication="principal.username"></span>)
+                        </small>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <span class="dropdown-item-text text-muted small">
+                                Rol: <strong sec:authentication="principal.authorities"></strong>
+                            </span>
+                        </li>
+                        <li><hr class="dropdown-divider"/></li>
+                        <li>
+                            <!-- Logout requiere POST (CSRF de Spring Security) -->
+                            <form th:action="@{/logout}" method="post" class="px-2">
+                                <button type="submit" class="btn btn-sm btn-outline-danger w-100">
+                                    Cerrar sesión
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </li>
+
             </ul>
         </div>
 

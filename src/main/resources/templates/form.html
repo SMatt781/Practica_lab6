@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="es">
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title th:text="${accion == 'nueva'} ? 'Nueva Película' : 'Editar Película'">Formulario</title>
-    <!-- Bootstrap 5 CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
           rel="stylesheet"/>
 </head>
 <body class="bg-light">
 
-    <!-- Navbar (fragmento reutilizable) -->
     <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 
     <div class="container mt-4" style="max-width: 600px;">
@@ -20,9 +20,8 @@
         </h2>
 
         <!--
-            Un solo formulario para crear Y editar:
-            - Si accion == 'nueva'  → POST /nueva
-            - Si accion == 'editar' → POST /editar/{id}
+            Un solo formulario para CREAR y EDITAR
+            Clase 5.1 - @ModelAttribute
         -->
         <form th:action="${accion == 'nueva'} ? @{/nueva} : @{/editar/{id}(id=${pelicula.id})}"
               th:object="${pelicula}"
