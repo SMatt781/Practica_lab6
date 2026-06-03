@@ -1,0 +1,21 @@
+### IntelliJ IDEA ###
+.idea/
+*.iml
+*.iws
+
+### Maven ###
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+### Spring Boot ###
+*.jar
+*.war
+*.ear
+
+### Logs ###
+*.log
+logs/
+
+### Sistema operativo ###
+.DS_Store
+Thumbs.db

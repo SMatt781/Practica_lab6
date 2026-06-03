@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>CineGTICS - Listado de Películas</title>
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+          rel="stylesheet"/>
+</head>
+<body class="bg-light">
+
+    <!-- Navbar (fragmento reutilizable) -->
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
+    <div class="container mt-4">
+
+        <h2 class="mb-3">Listado de Películas</h2>
+
+        <!-- Mensaje flash (redirect attributes) -->
+        <div th:if="${mensaje}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${mensaje}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- Buscador -->
+        <form th:action="@{/}" method="get" class="row g-2 mb-4">
+            <div class="col-auto">
+                <select name="criterio" class="form-select">
+                    <option value="titulo"
+                            th:selected="${criterio == 'titulo' or criterio == null}">
+                        Por título
+                    </option>
+                    <option value="genero"
+                            th:selected="${criterio == 'genero'}">
+                        Por género
+                    </option>
+                </select>
+            </div>
+            <div class="col-auto">
+                <input type="text" name="valor" class="form-control"
+                       placeholder="Buscar..." th:value="${valor}"/>
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary">Buscar</button>
+                <a th:href="@{/}" class="btn btn-outline-secondary">Limpiar</a>
+            </div>
+        </form>
+
+        <!-- Botón nueva película -->
+        <a th:href="@{/nueva}" class="btn btn-success mb-3">+ Nueva película</a>
+
+        <!-- Tabla de películas -->
+        <table class="table table-bordered table-hover bg-white shadow-sm">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Título</th>
+                    <th>Director</th>
+                    <th>Género</th>
+                    <th>Año</th>
+                    <th>Duración (min)</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Si no hay películas -->
+                <tr th:if="${#lists.isEmpty(peliculas)}">
+                    <td colspan="7" class="text-center text-muted">
+                        No se encontraron películas.
+                    </td>
+                </tr>
+                <!-- Fila por cada película -->
+                <tr th:each="pelicula, stat : ${peliculas}">
+                    <td th:text="${stat.count}"></td>
+                    <td th:text="${pelicula.titulo}"></td>
+                    <td th:text="${pelicula.director}"></td>
+                    <td th:text="${pelicula.genero}"></td>
+                    <td th:text="${pelicula.anio}"></td>
+                    <td th:text="${pelicula.duracion}"></td>
+                    <td>
+                        <a th:href="@{/editar/{id}(id=${pelicula.id})}"
+                           class="btn btn-sm btn-warning">Editar</a>
+                        <a th:href="@{/eliminar/{id}(id=${pelicula.id})}"
+                           class="btn btn-sm btn-danger"
+                           onclick="return confirm('¿Eliminar esta película?')">
+                            Eliminar
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
